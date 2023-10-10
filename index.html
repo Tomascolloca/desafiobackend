@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Zapatillas</title>
+</head>
+<body>
+  <h1>Zapatillas Disponibles</h1>
+
+  <div id="productList">
+  
+  </div>
+
+  <script src="productManager.js"></script>
+  <script>
+  
+    const productList = document.getElementById("productList");
+    const products = manager.getProducts();
+
+    products.forEach((product) => {
+      const productDiv = document.createElement("div");
+      productDiv.innerHTML = `
+        <h2>${product.title}</h2>
+        <p>${product.description}</p>
+        <p>Precio: $${product.price}</p>
+        <p>Stock: ${product.stock} unidades</p>
+        <img src="${product.image}" alt="${product.title}">
+      `;
+      productList.appendChild(productDiv);
+    });
+  </script>
+</body>
+</html>
