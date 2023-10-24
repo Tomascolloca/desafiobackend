@@ -11,7 +11,6 @@ class ProductManager {
       const data = fs.readFileSync(this.path, 'utf8');
       return JSON.parse(data);
     } catch (error) {
-
       return [];
     }
   }
@@ -21,7 +20,20 @@ class ProductManager {
     fs.writeFileSync(this.path, data, 'utf8');
   }
 
+  isCodeUnique(code) {
+    return !this.products.some((product) => product.code === code);
+  }
+
+  isIdUnique(id) {
+    return !this.products.some((product) => product.id === id);
+  }
+
   addProduct(title, description, price, image, id, stock) {
+    if (!this.isCodeUnique(id)) {
+      console.log(`El código (ID) ${id} ya está en uso. No se puede agregar el producto.`);
+      return;
+    }
+
     const product = {
       title,
       description,
@@ -35,21 +47,12 @@ class ProductManager {
     console.log(`Producto agregado: ${title} (ID: ${id})`);
   }
 
-  getProducts() {
-    return this.products;
-  }
-
-  getProductById(id) {
-    const product = this.products.find((product) => product.id === id);
-    if (product) {
-      console.log(`Producto encontrado: ${product.title} (ID: ${product.id})`);
-    } else {
-      console.log(`Producto no encontrado con ID: ${id}`);
-    }
-    return product;
-  }
-
   updateProduct(id, updatedProduct) {
+    if (!this.isIdUnique(id)) {
+      console.log(`No se puede actualizar el producto porque el ID ${id} ya está en uso.`);
+      return;
+    }
+
     const index = this.products.findIndex((product) => product.id === id);
     if (index !== -1) {
       this.products[index] = { ...this.products[index], ...updatedProduct };
@@ -59,22 +62,7 @@ class ProductManager {
       console.log(`Producto no encontrado con ID: ${id}`);
     }
   }
-
-  deleteProduct(id) {
-    const index = this.products.findIndex((product) => product.id === id);
-    if (index !== -1) {
-      this.products.splice(index, 1);
-      this.saveProducts();
-      console.log(`Producto eliminado con éxito.`);
-    } else {
-      console.log(`Producto no encontrado con ID: ${id}`);
-    }
-  }
 }
 
-const manager = new ProductManager('productData.json');
+module.exports = ProductManager;
 
-manager.addProduct("Zapatillas Nike", "Zapatillas deportivas de Nike", 120.0, "nike.jpg", 1, 15);
-manager.addProduct("Zapatillas Adidas", "Zapatillas deportivas de Adidas", 110.0, "adidas.jpg", 2, 10);
-
-console.log("Lista de productos:", manager.getProducts());
